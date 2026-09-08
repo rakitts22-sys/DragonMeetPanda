@@ -1,0 +1,70 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DragonMeetPanda">
+<meta name="theme-color" content="#090b0e">
+<title>DragonMeetPanda</title>
+<style>
+:root{--bg:#090b0e;--p:#151a20;--p2:#1c232b;--line:#2d3742;--txt:#f7f9fc;--muted:#aeb7c2;--g:#42d87f;--r:#ff6262}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent} body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.w{max-width:720px;margin:auto;padding:12px} h1{text-align:center;margin:4px 0 10px;font-size:28px} h1 span{color:#ff4b4b}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px} .mode,.tabs{display:grid;gap:7px;margin-bottom:8px} .mode{grid-template-columns:1fr 1fr} .tabs{grid-template-columns:repeat(4,1fr)}
+button{border:1px solid #3b4652;background:#242c35;color:white;border-radius:14px;font-weight:850;touch-action:manipulation} .mode button,.tabs button{min-height:44px;font-size:14px} .active{background:#3b4653!important}
+.edge,.panel,.cardbox{background:var(--p);border:1px solid var(--line);border-radius:17px;padding:10px} .edge{text-align:center} .name{font-size:12px;font-weight:900;letter-spacing:.07em}
+.tc{font-size:28px;font-weight:950;margin:3px 0} .metric{display:grid;grid-template-columns:1fr 1fr;gap:5px} .box{background:var(--p2);border-radius:10px;padding:6px} .lab{font-size:9px;color:var(--muted);text-transform:uppercase} .num{font-size:17px;font-weight:900} .good{color:var(--g)} .bad{color:var(--r)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:7px} .cards button{min-height:60px;font-size:22px} .cards .ten{font-size:14px} .actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px} .actions button{min-height:46px}
+.panel{margin-top:9px} .stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;text-align:center} .stat{background:var(--p2);border-radius:11px;padding:7px} .stat b{display:block;font-size:18px}
+.advanced .row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #222b35} .advanced .row:last-child{border:0} input,select{background:#0e1318;color:white;border:1px solid var(--line);border-radius:9px;padding:7px}
+.multi{display:grid;grid-template-columns:1fr 1fr;gap:8px} .mt{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:8px} .mt h3{text-align:center;margin:2px 0 6px} .mini{display:grid;grid-template-columns:1fr 1fr;gap:5px} .mini div{background:var(--p2);border-radius:9px;padding:6px;text-align:center} .hidden{display:none!important}
+.footer{text-align:center;color:#7f8994;font-size:11px;margin-top:10px;line-height:1.4}
+</style></head><body><div class="w">
+<h1>Dragon<span>Meet</span>Panda</h1>
+<div class="mode"><button id="sbtn" class="active" onclick="setMode('single')">Single Table</button><button id="mbtn" onclick="setMode('multi')">4-Table View</button></div>
+
+<div id="single">
+<div class="tabs"><button id="t0" onclick="sel(0)">Table 1</button><button id="t1" onclick="sel(1)">Table 2</button><button id="t2" onclick="sel(2)">Table 3</button><button id="t3" onclick="sel(3)">Table 4</button></div>
+<div class="grid2">
+<div class="edge"><div class="name">DRAGON 7 EDGE</div><div id="dtc" class="tc"></div><div class="metric"><div class="box"><div class="lab">Hit Rate</div><div id="dh" class="num"></div></div><div class="box"><div class="lab">EV</div><div id="de" class="num"></div></div></div><div id="db" class="num" style="margin-top:6px"></div></div>
+<div class="edge"><div class="name">PANDA 8 EDGE</div><div id="ptc" class="tc"></div><div class="metric"><div class="box"><div class="lab">Hit Rate</div><div id="ph" class="num"></div></div><div class="box"><div class="lab">EV</div><div id="pe" class="num"></div></div></div><div id="pb" class="num" style="margin-top:6px"></div></div>
+</div>
+<div class="panel"><div class="cards">
+<button onclick="add(1)">A</button><button onclick="add(2)">2</button><button onclick="add(3)">3</button><button onclick="add(4)">4</button>
+<button onclick="add(5)">5</button><button onclick="add(6)">6</button><button onclick="add(7)">7</button><button onclick="add(8)">8</button>
+<button onclick="add(9)">9</button><button class="ten" onclick="add(10)">10/J/Q/K</button>
+</div><div class="actions"><button onclick="undo()">↶ Undo</button><button onclick="resetTable()">↻ Reset Table</button></div></div>
+<div class="panel"><div class="stats"><div class="stat"><div class="lab">Cards Seen</div><b id="seen"></b></div><div class="stat"><div class="lab">Decks Left</div><b id="decks"></b></div></div></div>
+
+<div class="panel advanced"><div style="display:flex;justify-content:space-between;align-items:center"><b>Advanced</b><button onclick="document.getElementById('adv').classList.toggle('hidden')" style="padding:8px 12px">Show / Hide</button></div>
+<div id="adv" class="hidden">
+<div class="row"><span>Show DTC</span><input id="showDTC" type="checkbox" checked onchange="update()"></div>
+<div class="row"><span>Show PTC</span><input id="showPTC" type="checkbox" checked onchange="update()"></div>
+<div class="row"><span>Bankroll Management</span><input id="showBank" type="checkbox" checked onchange="update()"></div>
+<div class="row"><span>Show Sub-Minimum Allocation</span><input id="showSub" type="checkbox" checked onchange="update()"></div>
+<div class="row"><span>Abandon Ship %</span><input id="showAbandon" type="checkbox" onchange="update()"></div>
+<div class="row"><span>Bankroll</span><input id="bankroll" type="number" value="10000" min="1" step="100" onchange="update()"></div>
+<div class="row"><span>Kelly Fraction</span><select id="kelly" onchange="update()"><option value="1">Full Kelly</option><option value=".5">1/2 Kelly</option><option value=".25" selected>1/4 Kelly</option></select></div>
+<div class="row"><span>Total Minimum</span><input id="minTotal" type="number" value="10" min="1" step="1"></div>
+<div class="row"><span>Split Min / Side</span><input id="minSide" type="number" value="5" min="1" step="1"></div>
+<div class="row"><span>Bet Increment</span><input id="inc" type="number" value="1" min="1" step="1"></div>
+<div id="abandon" class="row hidden"><span>Abandon Ship</span><b>Pending future-opportunity sim</b></div>
+</div></div>
+</div>
+
+<div id="multi" class="hidden"><div id="mg" class="multi"></div></div>
+<div class="footer">DATA BASIS: 20,000,000 simulated shoes • 4 independent 5,000,000-shoe runs<br>Individual TC 0–25 values combine raw hands + hits from all four runs.</div>
+</div>
+
+<script>
+const D={1:0,2:0,3:0,4:-1,5:-1,6:-1,7:-1,8:2,9:2,10:0},P={1:1,2:1,3:-2,4:-2,5:-2,6:-1,7:-1,8:-2,9:4,10:1};
+const DL={"0":[0.022744214710748483,-0.06748719685931215],"1":[0.023301849682256803,-0.044624163027471075],"2":[0.023817600992972934,-0.023478359288109707],"3":[0.024322152075595575,-0.002791764900581417],"4":[0.024838017907936428,0.01835873422539347],"5":[0.025420881587060434,0.042256145069477835],"6":[0.02591772117964094,0.06262656836527847],"7":[0.026476475123821796,0.08553548007669365],"8":[0.026908815629053652,0.10326144079119981],"9":[0.027519017665041647,0.12827972426670753],"10":[0.02793575803229293,0.14536607932401013],"11":[0.028462272899746444,0.1669531888896043],"12":[0.02883681322507257,0.18230934222797535],"13":[0.029795189094398305,0.2216027528703306],"14":[0.029770334339018534,0.2205837078997599],"15":[0.030804602960353228,0.26298872137448237],"16":[0.031042150813366455,0.2727281833480246],"17":[0.031801607021846465,0.303865887895705],"18":[0.030080598733448476,0.23330454807138756],"19":[0.03040181418751329,0.2464743816880448],"20":[0.03219671240320609,0.3200652085314497],"21":[0.03040427664550618,0.2465753424657533],"22":[0.04856952761144378,0.9913506320691949],"23":[0.0387858347386172,0.5902192242833053],"24":[0.043824701195219126,0.7968127490039842],"25":[0.032520325203252036,0.3333333333333335]},PL={"0":[0.034697319267470286,-0.09786969904577258],"1":[0.03510085475782935,-0.08737777629643695],"2":[0.03547915115431224,-0.07754206998788182],"3":[0.035910950332663484,-0.06631529135074943],"4":[0.03620920946270686,-0.058560553969621676],"5":[0.03658451203754754,-0.04880268702376389],"6":[0.03694364261673004,-0.03946529196501891],"7":[0.03726076814965486,-0.03122002810897373],"8":[0.03805524782632906,-0.010563556515444383],"9":[0.038036992745373616,-0.011038188620285938],"10":[0.03826457098831237,-0.005121154303878495],"11":[0.038685125776826604,0.005813270197491782],"12":[0.0390043956451583,0.014114286774115747],"13":[0.03950692100464476,0.027179946120763798],"14":[0.039680854527361496,0.031702217711398806],"15":[0.0401564983722737,0.04406895767911623],"16":[0.04032835362088343,0.04853719414296931],"17":[0.04070856370255607,0.05842265626645782],"18":[0.04136743809599925,0.07555339049598042],"19":[0.04134604638283605,0.07499720595373738],"20":[0.041807337441407494,0.0869907734765949],"21":[0.04222956433189444,0.09796867262925546],"22":[0.042752377276395664,0.11156180918628733],"23":[0.0429650022942477,0.11709005965044006],"24":[0.043153016691911995,0.12197843398971187],"25":[0.043598896915762936,0.13357131980983628]};
+let mode='single',active=0,tables=[0,1,2,3].map(()=>({h:[],d:0,p:0,n:0}));
+function decksRemaining(t){return Math.max((416-t.n)/52,.25)} function tc(r,t){return r/decksRemaining(t)} function lk(o,x){let k=Math.floor(x);return k>=0&&k<=25?o[k]:null}
+function kellyBet(data,pay){if(!document.getElementById('showBank').checked||!data)return '';let p=data[0],f=Math.max(0,(pay*p-(1-p))/pay),b=(+document.getElementById('bankroll').value||10000)*f*(+document.getElementById('kelly').value||.25),step=+document.getElementById('inc').value||1;return 'Kelly $'+(Math.round(b/step)*step).toFixed(0)}
+function metric(h,e,b,data,pay){if(!data){h.textContent=e.textContent='—';b.textContent='';return}h.textContent=(data[0]*100).toFixed(4)+'%';e.textContent=(data[1]>=0?'+':'')+(data[1]*100).toFixed(2)+'%';e.className='num '+(data[1]>=0?'good':'bad');b.textContent=kellyBet(data,pay)}
+function update(){let t=tables[active],d=tc(t.d,t),p=tc(t.p,t),dd=lk(DL,d),pp=lk(PL,p);document.getElementById('dtc').textContent=(d>=0?'+':'')+d.toFixed(2);document.getElementById('ptc').textContent=(p>=0?'+':'')+p.toFixed(2);document.getElementById('dtc').style.display=document.getElementById('showDTC').checked?'block':'none';document.getElementById('ptc').style.display=document.getElementById('showPTC').checked?'block':'none';metric(dh,de,db,dd,40);metric(ph,pe,pb,pp,25);document.getElementById('seen').textContent=t.n;document.getElementById('decks').textContent=decksRemaining(t).toFixed(2);document.getElementById('abandon').classList.toggle('hidden',!document.getElementById('showAbandon').checked);for(let i=0;i<4;i++)document.getElementById('t'+i).classList.toggle('active',i===active);renderMulti();save()}
+function add(c){let t=tables[active];t.h.push(c);t.d+=D[c];t.p+=P[c];t.n++;update()} function undo(){let t=tables[active];if(!t.h.length)return;let c=t.h.pop();t.d-=D[c];t.p-=P[c];t.n--;update()} function resetTable(){if(confirm('Reset Table '+(active+1)+'?')){tables[active]={h:[],d:0,p:0,n:0};update()}} function sel(i){active=i;update()}
+function renderMulti(){document.getElementById('mg').innerHTML='';tables.forEach((t,i)=>{let d=tc(t.d,t),p=tc(t.p,t),dd=lk(DL,d),pp=lk(PL,p),x=document.createElement('div');x.className='mt';x.onclick=()=>{active=i;setMode('single')};x.innerHTML=`<h3>Table ${i+1}</h3><div class="mini"><div><span class="lab">Dragon EV</span><b>${dd?((dd[1]>=0?'+':'')+(dd[1]*100).toFixed(2)+'%'):'—'}</b></div><div><span class="lab">Panda EV</span><b>${pp?((pp[1]>=0?'+':'')+(pp[1]*100).toFixed(2)+'%'):'—'}</b></div><div><span class="lab">Dragon Hit</span><b>${dd?(dd[0]*100).toFixed(3)+'%':'—'}</b></div><div><span class="lab">Panda Hit</span><b>${pp?(pp[0]*100).toFixed(3)+'%':'—'}</b></div></div>`;document.getElementById('mg').appendChild(x)})}
+function setMode(m){mode=m;document.getElementById('single').classList.toggle('hidden',m!=='single');document.getElementById('multi').classList.toggle('hidden',m!=='multi');document.getElementById('sbtn').classList.toggle('active',m==='single');document.getElementById('mbtn').classList.toggle('active',m==='multi');update()}
+function save(){localStorage.setItem('dmp_v1',JSON.stringify({mode,active,tables}))} (function(){try{let s=JSON.parse(localStorage.getItem('dmp_v1')||'null');if(s){mode=s.mode||'single';active=+s.active||0;if(s.tables)tables=s.tables}}catch(e){}setMode(mode)})();
+</script></body></html>
